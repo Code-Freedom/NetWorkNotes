@@ -473,6 +473,62 @@
                 <h1 id="osiisotcpip">OSI/ISO模型、TCP/IP模型、五层模型<a class="headerlink" href="#osiisotcpip" title="Permanent link">link</a></h1>
 <h2 id="_1">层次结构<a class="headerlink" href="#_1" title="Permanent link">link</a></h2>
 <p><img alt="图1：层次结构" src="../../image/1层次结构.png" /></p>
+<p>五层模型中，数据链路层和物理层不分开。</p>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>功能</th>
+<th>协议</th>
+<th>传输单元</th>
+<th>中继器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用层</td>
+<td>进程交互</td>
+<td>HTTP</td>
+<td>报文</td>
+<td>网关</td>
+</tr>
+<tr>
+<td>传输层</td>
+<td></td>
+<td>TCP</td>
+<td>报文段</td>
+<td>网关</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>UDP</td>
+<td>用户数据报</td>
+<td>网关</td>
+</tr>
+<tr>
+<td>网络层/ 网际层/ IP层</td>
+<td>异构网络互联、路由与转发、拥塞控制</td>
+<td>网际协议IP、ICMP、IGMP、ARP、多种路由选择协议</td>
+<td>分组(IP数据报)</td>
+<td>路由器</td>
+</tr>
+<tr>
+<td>数据链路层</td>
+<td>封装成帧、透明传输、差错控制、流量控制、可靠传输</td>
+<td>PPP</td>
+<td>帧（frame）</td>
+<td>网桥、以太网交换机（多接口网桥）</td>
+</tr>
+<tr>
+<td>物理层</td>
+<td></td>
+<td></td>
+<td>比特</td>
+<td>集线器、转发器、中继器</td>
+</tr>
+</tbody>
+</table>
               
             </div>
           </div>
