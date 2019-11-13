@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="进击的小喽啰">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>10.TCP的拥塞控制 - 搞定技术面试：计算机网络必备基础知识</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "10.TCP\u7684\u62e5\u585e\u63a7\u5236";
+    var mkdocs_page_input_path = "Chapter4\\4.10congestioncontrol.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> 搞定技术面试：计算机网络必备基础知识</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">计算机网络体系结构</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../Chapter1/1.1model/">1.体系结构</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter1/1.2protocol/">2.各层对应的协议</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">数据链路层</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../Chapter2/2.1function/">1.功能</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter2/2.2mechanism/">2.流量控制与可靠传输机制</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter2/2.3protocol/">3.协议</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter2/2.4device/">4.设备</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter2/2.5adapter/">5.适配器的作用是什么，网络适配器工作在哪一层</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">网络层</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../Chapter3/3.1function/">1.功能</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter3/3.2ip/">2.IP地址及其表示方法</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter3/3.3privateip/">3.有哪些私有(保留)地址</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter3/3.4arp/">4.ARP（地址解析协议）是什么？作用是什么？简单讲述一下ARP协议的工作过程</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter3/3.5ipdatagram/">5.IP数据报的格式</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter3/3.6route/">6.路由表是什么?</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter3/3.7routecrate/">7.路由表的建立</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter3/3.8routestore/">8.路由表中存的是什么?</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter3/3.9subnetmask/">9.子网掩码是什么?作用是什么?</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">传输层</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../4.1function/">1.功能</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.2effect/">2.运输层在通信协议栈的中的地位和作用?</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.3diff/">3.运输层的通信和网络层的通信有什么不同？为什么说运输层是必不可少的？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.4service/">4.应用层服务-端口号-协议</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.5tcp/">5.TCP协议</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.6tcphead/">6.TCP首部格式</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.7tcpimplement/">7.TCP可靠传输的实现</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.8flowcontrol/">8.TCP的流量控制</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.9flowcontroldiff/">9.传输层流量控制和数据链路层流量控制的区别</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">10.TCP的拥塞控制</a>
+    <ul class="subnav">
+            
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.11flowcongestion/">11.拥塞控制和流量控制的关系</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.12congestion/">12.拥塞控制的机制</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.13congestionalgorithm/">13.拥塞算法</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.14connectionmanagemnet/">14.TCP连接管理</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.15confirm/">15.三次握手中A为什么要再发送一次确认？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.16wait/">16.A在TIME-WAIT状态必须等待 2MSL 的时间？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.17tcpdanger/">17.TCP三次握手安全隐患有哪些？举例</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.18udp/">18.UDP协议</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.19udphead/">19.UDP首部格式</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.20tcpudpdiff/">20.TCP协议与UDP协议的比较</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.21udpreliable/">21.应用层使用UDP完成可靠传输可能吗？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.22protocol/">22.使用TCP的协议和使用UDP对应的协议</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4.23port/">23.TCP和UDP能不能用同一个端口号？</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">应用层</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.1dns/">1.DNS域名系统</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.2dnsanalysis/">2.域名的解析过程</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.3tcporudp/">3.DNS在域名解析上使用TCP还是UDP?</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.4cache/">4.高速缓存域名服务器</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.5http/">5.超文本传输协议HTTP</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.6httpwork/">6.HTTP协议的工作过程</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.7time/">7.请求一个万维网文档所需要的时间</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.8https/">8.HTTP1.0、HTTP1.1 和HTTP2.0</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.9resume/">9.断点续传原理</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.10browse/">10.现代浏览器在与服务器建立了一个 TCP 连接后是否会在一个 HTTP 请求完成后断开？什么情况下会断开？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.11connection/">11.一个 TCP 连接可以对应几个 HTTP 请求？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.12how/">12.一个 TCP 连接中 HTTP 请求发送可以一起发送么（比如一起发三个请求，再三个响应一起接收）？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.13load/">13.在 HTTP/1.1 时代，浏览器是如何提高页面加载效率的呢？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.14ssl/">14.为什么有的时候刷新页面不需要重新建立 SSL 连接？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.15host/">15.浏览器对同一 Host 建立 TCP 连接到数量有没有限制？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.16pic/">16.收到的 HTML 如果包含几十个图片标签，这些图片是以什么方式、什么顺序、建立了多少连接、使用什么协议被下载下来的呢？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.17www/">17.当使用鼠标点击一个万维网文档时，若该文档除了有文本外，还有一个本地.gif和两个远程.gif，问：需要使用哪个应用程序，以及需要建立几次UDP连接，几次TCP连接？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.18httpmsg/">18.HTTP报文结构</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.19way/">19.HTTP请求报文的一些方法</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.20statuscode/">20.HTTP响应报文的状态码</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.21diff/">21.GET和POST的区别</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.22cache/">22.缓存的作用</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.23usermsg/">23.在服务器上存放用户信息Cookie</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.24cookie/">24.Cookie的用途</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.25session/">25.Session</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.26cookie/">26.浏览器禁用 Cookie</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.27diff/">27.Cookie 与 Session 选择</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.28tftpandftp/">28.简单文件传送协议TFTP与文件传送协议FTP有什么区别，各用在什么场合？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.29dhcp/">29.动态主机配置协议DHCP</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.30howdhcp/">30.DHCP工作过程是怎样的？</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter5/5.31socket/">31.Soket——应用进程跨越网络的通信</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">网络安全</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../Chapter6/6.1safeprotocol/">1.各种安全协议</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">其他</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../Chapter7/7.1iomodel/">1.I/O模型</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter7/7.2fiveiomodel/">2.五种I/O模型</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter7/7.3diff/">3.同步I/O和异步I/O</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter7/7.4diff/">4.阻塞I/O和非阻塞I/O</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter7/7.5multiplexing/">5.I/O多路复用</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter7/7.6select/">6.select函数</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter7/7.7selectvspoll/">7.select vs poll</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter7/7.8epoll/">8.epoll</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Chapter7/7.9scense/">9.select、poll、epoll的应用场景</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">搞定技术面试：计算机网络必备基础知识</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>传输层 &raquo;</li>
+        
+      
+    
+    <li>10.TCP的拥塞控制</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../4.11flowcongestion/" class="btn btn-neutral float-right" title="11.拥塞控制和流量控制的关系">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../4.9flowcontroldiff/" class="btn btn-neutral" title="9.传输层流量控制和数据链路层流量控制的区别"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../4.9flowcontroldiff/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../4.11flowcongestion/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+
+</body>
+</html>
