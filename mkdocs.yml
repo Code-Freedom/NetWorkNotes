@@ -1,5 +1,98 @@
-site_name: My Docs
+site_name: 搞定技术面试：计算机网络必备基础知识 v1.0
 nav:
     - Home: index.md
-    - About: about.md
-theme: readthedocs
+    - 计算机网络体系结构: 
+        - 1.体系结构: Chapter1/1.1model.md
+        - 2.各层对应的协议: Chapter1/1.2protocol.md
+    - 数据链路层: 
+        - 1.功能: Chapter2/2.1function.md
+        - 2.流量控制与可靠传输机制: Chapter2/2.2mechanism.md
+        - 3.协议: Chapter2/2.3protocol.md
+        - 4.设备: Chapter2/2.4device.md
+        - 5.适配器的作用是什么，网络适配器工作在哪一层: Chapter2/2.5adapter.md
+    - 网络层: 
+        - 1.功能: Chapter3/3.1function.md
+        - 2.IP地址及其表示方法: Chapter3/3.2ip.md
+        - 3.有哪些私有(保留)地址: Chapter3/3.3privateip.md
+        - 4.ARP（地址解析协议）是什么？作用是什么？简单讲述一下ARP协议的工作过程: Chapter3/3.4arp.md
+        - 5.IP数据报的格式: Chapter3/3.5ipdatagram.md
+        - 6.路由表是什么?: Chapter3/3.6route.md
+        - 7.路由表的建立: Chapter3/3.7routecrate.md
+        - 8.路由表中存的是什么?: Chapter3/3.8routestore.md
+        - 9.子网掩码是什么?作用是什么?: Chapter3/3.9subnetmask.md
+    - 传输层: 
+        - 1.功能: Chapter4/4.1function.md
+        - 2.运输层在通信协议栈的中的地位和作用?: Chapter4/4.2effect.md
+        - 3.运输层的通信和网络层的通信有什么不同？为什么说运输层是必不可少的？: Chapter4/4.3diff.md
+        - 4.应用层服务-端口号-协议: Chapter4/4.4service.md
+        - 5.TCP协议: Chapter4/4.5tcp.md
+        - 6.TCP首部格式: Chapter4/4.6tcphead.md
+        - 7.TCP可靠传输的实现: Chapter4/4.7tcpimplement.md
+        - 8.TCP的流量控制: Chapter4/4.8flowcontrol.md
+        - 9.传输层流量控制和数据链路层流量控制的区别: Chapter4/4.9flowcontroldiff.md
+        - 10.TCP的拥塞控制: Chapter4/4.10congestioncontrol.md
+        - 11.拥塞控制和流量控制的关系: Chapter4/4.11flowcongestion.md
+        - 12.拥塞控制的机制: Chapter4/4.12congestion.md
+        - 13.拥塞算法: Chapter4/4.13congestionalgorithm.md
+        - 14.TCP连接管理: Chapter4/4.14connectionmanagemnet.md
+        - 15.三次握手中A为什么要再发送一次确认？: Chapter4/4.15confirm.md
+        - 16.A在TIME-WAIT状态必须等待 2MSL 的时间？: Chapter4/4.16wait.md
+        - 17.TCP三次握手安全隐患有哪些？举例: Chapter4/4.17tcpdanger.md
+        - 18.UDP协议: Chapter4/4.18udp.md
+        - 19.UDP首部格式: Chapter4/4.19udphead.md
+        - 20.TCP协议与UDP协议的比较: Chapter4/4.20tcpudpdiff.md
+        - 21.应用层使用UDP完成可靠传输可能吗？: Chapter4/4.21udpreliable.md
+        - 22.使用TCP的协议和使用UDP对应的协议: Chapter4/4.22protocol.md
+        - 23.TCP和UDP能不能用同一个端口号？: Chapter4/4.23port.md
+    - 应用层: 
+        - 1.DNS域名系统: Chapter5/5.1dns.md
+        - 2.域名的解析过程: Chapter5/5.2dnsanalysis.md
+        - 3.DNS在域名解析上使用TCP还是UDP?: Chapter5/5.3tcporudp.md
+        - 4.高速缓存域名服务器: Chapter5/5.4cache.md
+        - 5.超文本传输协议HTTP: Chapter5/5.5http.md
+        - 6.HTTP协议的工作过程: Chapter5/5.6httpwork.md
+        - 7.请求一个万维网文档所需要的时间: Chapter5/5.7time.md
+        - 8.HTTP1.0、HTTP1.1 和HTTP2.0: Chapter5/5.8https.md
+        - 9.断点续传原理: Chapter5/5.9resume.md
+        - 10.现代浏览器在与服务器建立了一个 TCP 连接后是否会在一个 HTTP 请求完成后断开？什么情况下会断开？: Chapter5/5.10browse.md
+        - 11.一个 TCP 连接可以对应几个 HTTP 请求？: Chapter5/5.11connection.md
+        - 12.一个 TCP 连接中 HTTP 请求发送可以一起发送么（比如一起发三个请求，再三个响应一起接收）？: Chapter5/5.12how.md
+        - 13.在 HTTP/1.1 时代，浏览器是如何提高页面加载效率的呢？: Chapter5/5.13load.md
+        - 14.为什么有的时候刷新页面不需要重新建立 SSL 连接？: Chapter5/5.14ssl.md
+        - 15.浏览器对同一 Host 建立 TCP 连接到数量有没有限制？: Chapter5/5.15host.md
+        - 16.收到的 HTML 如果包含几十个图片标签，这些图片是以什么方式、什么顺序、建立了多少连接、使用什么协议被下载下来的呢？: Chapter5/5.16pic.md
+        - 17.当使用鼠标点击一个万维网文档时，若该文档除了有文本外，还有一个本地.gif和两个远程.gif，问：需要使用哪个应用程序，以及需要建立几次UDP连接，几次TCP连接？: Chapter5/5.17www.md
+        - 18.HTTP报文结构: Chapter5/5.18httpmsg.md
+        - 19.HTTP请求报文的一些方法: Chapter5/5.19way.md
+        - 20.HTTP响应报文的状态码: Chapter5/5.20statuscode.md
+        - 21.GET和POST的区别: Chapter5/5.21diff.md
+        - 22.缓存的作用: Chapter5/5.22cache.md
+        - 23.在服务器上存放用户信息Cookie: Chapter5/5.23usermsg.md
+        - 24.Cookie的用途: Chapter5/5.24cookie.md
+        - 25.Session: Chapter5/5.25session.md
+        - 26.浏览器禁用 Cookie: Chapter5/5.26cookie.md
+        - 27.Cookie 与 Session 选择: Chapter5/5.27diff.md
+        - 28.简单文件传送协议TFTP与文件传送协议FTP有什么区别，各用在什么场合？: Chapter5/5.28tftpandftp.md
+        - 29.动态主机配置协议DHCP: Chapter5/5.29dhcp.md
+        - 30.DHCP工作过程是怎样的？: Chapter5/5.30howdhcp.md
+        - 31.Soket——应用进程跨越网络的通信: Chapter5/5.31socket.md
+    - 网络安全: 
+        - 1.各种安全协议: Chapter6/6.1safeprotocol.md
+    - 其他: 
+        - 1.I/O模型: Chapter7/7.1iomodel.md
+        - 2.五种I/O模型: Chapter7/7.2fiveiomodel.md
+        - 3.同步I/O和异步I/O: Chapter7/7.3diff.md
+        - 4.阻塞I/O和非阻塞I/O: Chapter7/7.4diff.md
+        - 5.I/O多路复用: Chapter7/7.5multiplexing.md
+        - 6.select函数: Chapter7/7.6select.md
+        - 7.select vs poll: Chapter7/7.7selectvspoll.md
+        - 8.epoll: Chapter7/7.8epoll.md
+        - 9.select、poll、epoll的应用场景: Chapter7/7.9scense.md
+theme: 
+    name: readthedocs
+    feature:
+        tabs: true
+markdown_extensions:
+  - toc:
+      permalink: link
+site_author: 进击的小喽啰
