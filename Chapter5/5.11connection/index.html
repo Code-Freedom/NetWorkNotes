@@ -1,513 +1,1543 @@
-<!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <meta name="author" content="进击的小喽啰">
-  <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>11.一个 TCP 连接可以对应几个 HTTP 请求？ - 搞定技术面试：计算机网络必备基础知识 v1.0</title>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "11.\u4e00\u4e2a TCP \u8fde\u63a5\u53ef\u4ee5\u5bf9\u5e94\u51e0\u4e2a HTTP \u8bf7\u6c42\uff1f";
-    var mkdocs_page_input_path = "Chapter5\\5.11connection.md";
-    var mkdocs_page_url = null;
-  </script>
-  
-  <script src="../../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script> 
-  
-</head>
 
-<body class="wy-body-for-nav" role="document">
 
-  <div class="wy-grid-for-nav">
 
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
     
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-      <div class="wy-side-nav-search">
-        <a href="../.." class="icon icon-home"> 搞定技术面试：计算机网络必备基础知识 v1.0</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
-  </form>
-</div>
-      </div>
-
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-	<ul class="current">
-	  
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../..">Home</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">计算机网络体系结构</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../../Chapter1/1.1model/">1.体系结构</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter1/1.2protocol/">2.各层对应的协议</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">数据链路层</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../../Chapter2/2.1function/">1.功能</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter2/2.2mechanism/">2.流量控制与可靠传输机制</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter2/2.3protocol/">3.协议</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter2/2.4device/">4.设备</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter2/2.5adapter/">5.适配器的作用是什么，网络适配器工作在哪一层</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">网络层</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../../Chapter3/3.1function/">1.功能</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter3/3.2ip/">2.IP地址及其表示方法</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter3/3.3privateip/">3.有哪些私有(保留)地址</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter3/3.4arp/">4.ARP（地址解析协议）是什么？作用是什么？简单讲述一下ARP协议的工作过程</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter3/3.5ipdatagram/">5.IP数据报的格式</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter3/3.6route/">6.路由表是什么?</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter3/3.7routecrate/">7.路由表的建立</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter3/3.8routestore/">8.路由表中存的是什么?</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter3/3.9subnetmask/">9.子网掩码是什么?作用是什么?</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">传输层</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.1function/">1.功能</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.2effect/">2.运输层在通信协议栈的中的地位和作用?</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.3diff/">3.运输层的通信和网络层的通信有什么不同？为什么说运输层是必不可少的？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.4service/">4.应用层服务-端口号-协议</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.5tcp/">5.TCP协议</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.6tcphead/">6.TCP首部格式</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.7tcpimplement/">7.TCP可靠传输的实现</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.8flowcontrol/">8.TCP的流量控制</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.9flowcontroldiff/">9.传输层流量控制和数据链路层流量控制的区别</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.10congestioncontrol/">10.TCP的拥塞控制</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.11flowcongestion/">11.拥塞控制和流量控制的关系</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.12congestion/">12.拥塞控制的机制</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.13congestionalgorithm/">13.拥塞算法</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.14connectionmanagemnet/">14.TCP连接管理</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.15confirm/">15.三次握手中A为什么要再发送一次确认？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.16wait/">16.A在TIME-WAIT状态必须等待 2MSL 的时间？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.17tcpdanger/">17.TCP三次握手安全隐患有哪些？举例</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.18udp/">18.UDP协议</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.19udphead/">19.UDP首部格式</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.20tcpudpdiff/">20.TCP协议与UDP协议的比较</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.21udpreliable/">21.应用层使用UDP完成可靠传输可能吗？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.22protocol/">22.使用TCP的协议和使用UDP对应的协议</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter4/4.23port/">23.TCP和UDP能不能用同一个端口号？</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">应用层</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../5.1dns/">1.DNS域名系统</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.2dnsanalysis/">2.域名的解析过程</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.3tcporudp/">3.DNS在域名解析上使用TCP还是UDP?</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.4cache/">4.高速缓存域名服务器</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.5http/">5.超文本传输协议HTTP</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.6httpwork/">6.HTTP协议的工作过程</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.7time/">7.请求一个万维网文档所需要的时间</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.8https/">8.HTTP1.0、HTTP1.1 和HTTP2.0</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.9resume/">9.断点续传原理</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.10browse/">10.现代浏览器在与服务器建立了一个 TCP 连接后是否会在一个 HTTP 请求完成后断开？什么情况下会断开？</a>
-                </li>
-                <li class=" current">
-                    
-    <a class="current" href="./">11.一个 TCP 连接可以对应几个 HTTP 请求？</a>
-    <ul class="subnav">
-            
-    </ul>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.12how/">12.一个 TCP 连接中 HTTP 请求发送可以一起发送么（比如一起发三个请求，再三个响应一起接收）？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.13load/">13.在 HTTP/1.1 时代，浏览器是如何提高页面加载效率的呢？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.14ssl/">14.为什么有的时候刷新页面不需要重新建立 SSL 连接？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.15host/">15.浏览器对同一 Host 建立 TCP 连接到数量有没有限制？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.16pic/">16.收到的 HTML 如果包含几十个图片标签，这些图片是以什么方式、什么顺序、建立了多少连接、使用什么协议被下载下来的呢？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.17www/">17.当使用鼠标点击一个万维网文档时，若该文档除了有文本外，还有一个本地.gif和两个远程.gif，问：需要使用哪个应用程序，以及需要建立几次UDP连接，几次TCP连接？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.18httpmsg/">18.HTTP报文结构</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.19way/">19.HTTP请求报文的一些方法</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.20statuscode/">20.HTTP响应报文的状态码</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.21diff/">21.GET和POST的区别</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.22cache/">22.缓存的作用</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.23usermsg/">23.在服务器上存放用户信息Cookie</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.24cookie/">24.Cookie的用途</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.25session/">25.Session</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.26cookie/">26.浏览器禁用 Cookie</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.27diff/">27.Cookie 与 Session 选择</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.28tftpandftp/">28.简单文件传送协议TFTP与文件传送协议FTP有什么区别，各用在什么场合？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.29dhcp/">29.动态主机配置协议DHCP</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.30howdhcp/">30.DHCP工作过程是怎样的？</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../5.31socket/">31.Soket——应用进程跨越网络的通信</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">网络安全</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../../Chapter6/6.1safeprotocol/">1.各种安全协议</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">其他</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../../Chapter7/7.1iomodel/">1.I/O模型</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter7/7.2fiveiomodel/">2.五种I/O模型</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter7/7.3diff/">3.同步I/O和异步I/O</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter7/7.4diff/">4.阻塞I/O和非阻塞I/O</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter7/7.5multiplexing/">5.I/O多路复用</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter7/7.6select/">6.select函数</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter7/7.7selectvspoll/">7.select vs poll</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter7/7.8epoll/">8.epoll</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../../Chapter7/7.9scense/">9.select、poll、epoll的应用场景</a>
-                </li>
-    </ul>
-	    </li>
-          
-        </ul>
-      </div>
-      &nbsp;
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../..">搞定技术面试：计算机网络必备基础知识 v1.0</a>
-      </nav>
-
       
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="../..">Docs</a> &raquo;</li>
+      
+        <meta name="author" content="进击的小喽啰">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.3">
+    
+    
+      
+        <title>11.一个 TCP 连接可以对应几个 HTTP 请求？ - 搞定技术面试：计算机网络必备基础知识 v1.0</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.30686662.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
     
       
         
-          <li>应用层 &raquo;</li>
+<script>
+  window.ga = window.ga || function() {
+    (ga.q = ga.q || []).push(arguments)
+  }
+  ga.l = +new Date
+  /* Setup integration and send page view */
+  ga("create", "UA-152594401-1", "auto")
+  ga("set", "anonymizeIp", true)
+  ga("send", "pageview")
+  /* Register handler to log search on blur */
+  document.addEventListener("DOMContentLoaded", () => {
+    if (document.forms.search) {
+      var query = document.forms.search.query
+      query.addEventListener("blur", function() {
+        if (this.value) {
+          var path = document.location.pathname;
+          ga("send", "pageview", path + "?q=" + this.value)
+        }
+      })
+    }
+  })
+</script>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
         
-      
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-    <li>11.一个 TCP 连接可以对应几个 HTTP 请求？</li>
-    <li class="wy-breadcrumbs-aside">
-      
-    </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main">
-            <div class="section">
-              
-                
-              
-            </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../5.12how/" class="btn btn-neutral float-right" title="12.一个 TCP 连接中 HTTP 请求发送可以一起发送么（比如一起发三个请求，再三个响应一起接收）？">Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../5.10browse/" class="btn btn-neutral" title="10.现代浏览器在与服务器建立了一个 TCP 连接后是否会在一个 HTTP 请求完成后断开？什么情况下会断开？"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
-    </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <!-- Copyright etc -->
     
-  </div>
-
-  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-</footer>
-      
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="搞定技术面试：计算机网络必备基础知识 v1.0" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              搞定技术面试：计算机网络必备基础知识 v1.0
+            </span>
+            <span class="md-header-nav__topic">
+              
+                11.一个 TCP 连接可以对应几个 HTTP 请求？
+              
+            </span>
+          
         </div>
       </div>
-
-    </section>
-
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="rst-versions" role="note" style="cursor: pointer">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-      
-        <span><a href="../5.10browse/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="../5.12how/" style="color: #fcfcfc">Next &raquo;</a></span>
-      
-    </span>
 </div>
-    <script>var base_url = '../..';</script>
-    <script src="../../js/theme.js" defer></script>
-      <script src="../../search/main.js" defer></script>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+        
 
-</body>
+  
+
+<nav class="md-tabs md-tabs--active" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../.." class="md-tabs__link">
+        Home
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../Chapter1/1.1model/" class="md-tabs__link">
+          计算机网络体系结构
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../Chapter2/2.1function/" class="md-tabs__link">
+          数据链路层
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../Chapter3/3.1function/" class="md-tabs__link">
+          网络层
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../Chapter4/4.1function/" class="md-tabs__link">
+          传输层
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../5.1dns/" class="md-tabs__link md-tabs__link--active">
+          应用层
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../Chapter6/6.1safeprotocol/" class="md-tabs__link">
+          网络安全
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../Chapter7/7.1iomodel/" class="md-tabs__link">
+          其他
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="搞定技术面试：计算机网络必备基础知识 v1.0" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    搞定技术面试：计算机网络必备基础知识 v1.0
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      计算机网络体系结构
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        计算机网络体系结构
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter1/1.1model/" title="1.体系结构" class="md-nav__link">
+      1.体系结构
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter1/1.2protocol/" title="2.各层对应的协议" class="md-nav__link">
+      2.各层对应的协议
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      数据链路层
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        数据链路层
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter2/2.1function/" title="1.功能" class="md-nav__link">
+      1.功能
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter2/2.2mechanism/" title="2.流量控制与可靠传输机制" class="md-nav__link">
+      2.流量控制与可靠传输机制
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter2/2.3protocol/" title="3.协议" class="md-nav__link">
+      3.协议
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter2/2.4device/" title="4.设备" class="md-nav__link">
+      4.设备
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter2/2.5adapter/" title="5.适配器的作用是什么，网络适配器工作在哪一层" class="md-nav__link">
+      5.适配器的作用是什么，网络适配器工作在哪一层
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      网络层
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        网络层
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter3/3.1function/" title="1.功能" class="md-nav__link">
+      1.功能
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter3/3.2ip/" title="2.IP地址及其表示方法" class="md-nav__link">
+      2.IP地址及其表示方法
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter3/3.3privateip/" title="3.有哪些私有(保留)地址" class="md-nav__link">
+      3.有哪些私有(保留)地址
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter3/3.4arp/" title="4.ARP（地址解析协议）是什么？作用是什么？简单讲述一下ARP协议的工作过程" class="md-nav__link">
+      4.ARP（地址解析协议）是什么？作用是什么？简单讲述一下ARP协议的工作过程
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter3/3.5ipdatagram/" title="5.IP数据报的格式" class="md-nav__link">
+      5.IP数据报的格式
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter3/3.6route/" title="6.路由表是什么?" class="md-nav__link">
+      6.路由表是什么?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter3/3.7routecrate/" title="7.路由表的建立" class="md-nav__link">
+      7.路由表的建立
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter3/3.8routestore/" title="8.路由表中存的是什么?" class="md-nav__link">
+      8.路由表中存的是什么?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter3/3.9subnetmask/" title="9.子网掩码是什么?作用是什么?" class="md-nav__link">
+      9.子网掩码是什么?作用是什么?
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      传输层
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        传输层
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.1function/" title="1.功能" class="md-nav__link">
+      1.功能
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.2effect/" title="2.运输层在通信协议栈的中的地位和作用?" class="md-nav__link">
+      2.运输层在通信协议栈的中的地位和作用?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.3diff/" title="3.运输层的通信和网络层的通信有什么不同？为什么说运输层是必不可少的？" class="md-nav__link">
+      3.运输层的通信和网络层的通信有什么不同？为什么说运输层是必不可少的？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.4service/" title="4.应用层服务-端口号-协议" class="md-nav__link">
+      4.应用层服务-端口号-协议
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.5tcp/" title="5.TCP协议" class="md-nav__link">
+      5.TCP协议
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.6tcphead/" title="6.TCP首部格式" class="md-nav__link">
+      6.TCP首部格式
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.7tcpimplement/" title="7.TCP可靠传输的实现" class="md-nav__link">
+      7.TCP可靠传输的实现
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.8flowcontrol/" title="8.TCP的流量控制" class="md-nav__link">
+      8.TCP的流量控制
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.9flowcontroldiff/" title="9.传输层流量控制和数据链路层流量控制的区别" class="md-nav__link">
+      9.传输层流量控制和数据链路层流量控制的区别
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.10congestioncontrol/" title="10.TCP的拥塞控制" class="md-nav__link">
+      10.TCP的拥塞控制
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.11flowcongestion/" title="11.拥塞控制和流量控制的关系" class="md-nav__link">
+      11.拥塞控制和流量控制的关系
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.12congestion/" title="12.拥塞控制的机制" class="md-nav__link">
+      12.拥塞控制的机制
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.13congestionalgorithm/" title="13.拥塞算法" class="md-nav__link">
+      13.拥塞算法
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.14connectionmanagemnet/" title="14.TCP连接管理" class="md-nav__link">
+      14.TCP连接管理
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.15confirm/" title="15.三次握手中A为什么要再发送一次确认？" class="md-nav__link">
+      15.三次握手中A为什么要再发送一次确认？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.16wait/" title="16.A在TIME-WAIT状态必须等待 2MSL 的时间？" class="md-nav__link">
+      16.A在TIME-WAIT状态必须等待 2MSL 的时间？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.17tcpdanger/" title="17.TCP三次握手安全隐患有哪些？举例" class="md-nav__link">
+      17.TCP三次握手安全隐患有哪些？举例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.18udp/" title="18.UDP协议" class="md-nav__link">
+      18.UDP协议
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.19udphead/" title="19.UDP首部格式" class="md-nav__link">
+      19.UDP首部格式
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.20tcpudpdiff/" title="20.TCP协议与UDP协议的比较" class="md-nav__link">
+      20.TCP协议与UDP协议的比较
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.21udpreliable/" title="21.应用层使用UDP完成可靠传输可能吗？" class="md-nav__link">
+      21.应用层使用UDP完成可靠传输可能吗？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.22protocol/" title="22.使用TCP的协议和使用UDP对应的协议" class="md-nav__link">
+      22.使用TCP的协议和使用UDP对应的协议
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter4/4.23port/" title="23.TCP和UDP能不能用同一个端口号？" class="md-nav__link">
+      23.TCP和UDP能不能用同一个端口号？
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6" checked>
+    
+    <label class="md-nav__link" for="nav-6">
+      应用层
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        应用层
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.1dns/" title="1.DNS域名系统" class="md-nav__link">
+      1.DNS域名系统
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.2dnsanalysis/" title="2.域名的解析过程" class="md-nav__link">
+      2.域名的解析过程
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.3tcporudp/" title="3.DNS在域名解析上使用TCP还是UDP?" class="md-nav__link">
+      3.DNS在域名解析上使用TCP还是UDP?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.4cache/" title="4.高速缓存域名服务器" class="md-nav__link">
+      4.高速缓存域名服务器
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.5http/" title="5.超文本传输协议HTTP" class="md-nav__link">
+      5.超文本传输协议HTTP
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.6httpwork/" title="6.HTTP协议的工作过程" class="md-nav__link">
+      6.HTTP协议的工作过程
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.7time/" title="7.请求一个万维网文档所需要的时间" class="md-nav__link">
+      7.请求一个万维网文档所需要的时间
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.8https/" title="8.HTTP1.0、HTTP1.1 和HTTP2.0" class="md-nav__link">
+      8.HTTP1.0、HTTP1.1 和HTTP2.0
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.9resume/" title="9.断点续传原理" class="md-nav__link">
+      9.断点续传原理
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.10browse/" title="10.现代浏览器在与服务器建立了一个 TCP 连接后是否会在一个 HTTP 请求完成后断开？什么情况下会断开？" class="md-nav__link">
+      10.现代浏览器在与服务器建立了一个 TCP 连接后是否会在一个 HTTP 请求完成后断开？什么情况下会断开？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+    <a href="./" title="11.一个 TCP 连接可以对应几个 HTTP 请求？" class="md-nav__link md-nav__link--active">
+      11.一个 TCP 连接可以对应几个 HTTP 请求？
+    </a>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.12how/" title="12.一个 TCP 连接中 HTTP 请求发送可以一起发送么（比如一起发三个请求，再三个响应一起接收）？" class="md-nav__link">
+      12.一个 TCP 连接中 HTTP 请求发送可以一起发送么（比如一起发三个请求，再三个响应一起接收）？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.13load/" title="13.在 HTTP/1.1 时代，浏览器是如何提高页面加载效率的呢？" class="md-nav__link">
+      13.在 HTTP/1.1 时代，浏览器是如何提高页面加载效率的呢？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.14ssl/" title="14.为什么有的时候刷新页面不需要重新建立 SSL 连接？" class="md-nav__link">
+      14.为什么有的时候刷新页面不需要重新建立 SSL 连接？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.15host/" title="15.浏览器对同一 Host 建立 TCP 连接到数量有没有限制？" class="md-nav__link">
+      15.浏览器对同一 Host 建立 TCP 连接到数量有没有限制？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.16pic/" title="16.收到的 HTML 如果包含几十个图片标签，这些图片是以什么方式、什么顺序、建立了多少连接、使用什么协议被下载下来的呢？" class="md-nav__link">
+      16.收到的 HTML 如果包含几十个图片标签，这些图片是以什么方式、什么顺序、建立了多少连接、使用什么协议被下载下来的呢？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.17www/" title="17.当使用鼠标点击一个万维网文档时，若该文档除了有文本外，还有一个本地.gif和两个远程.gif，问：需要使用哪个应用程序，以及需要建立几次UDP连接，几次TCP连接？" class="md-nav__link">
+      17.当使用鼠标点击一个万维网文档时，若该文档除了有文本外，还有一个本地.gif和两个远程.gif，问：需要使用哪个应用程序，以及需要建立几次UDP连接，几次TCP连接？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.18httpmsg/" title="18.HTTP报文结构" class="md-nav__link">
+      18.HTTP报文结构
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.19way/" title="19.HTTP请求报文的一些方法" class="md-nav__link">
+      19.HTTP请求报文的一些方法
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.20statuscode/" title="20.HTTP响应报文的状态码" class="md-nav__link">
+      20.HTTP响应报文的状态码
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.21diff/" title="21.GET和POST的区别" class="md-nav__link">
+      21.GET和POST的区别
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.22cache/" title="22.缓存的作用" class="md-nav__link">
+      22.缓存的作用
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.23usermsg/" title="23.在服务器上存放用户信息Cookie" class="md-nav__link">
+      23.在服务器上存放用户信息Cookie
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.24cookie/" title="24.Cookie的用途" class="md-nav__link">
+      24.Cookie的用途
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.25session/" title="25.Session" class="md-nav__link">
+      25.Session
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.26cookie/" title="26.浏览器禁用 Cookie" class="md-nav__link">
+      26.浏览器禁用 Cookie
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.27diff/" title="27.Cookie 与 Session 选择" class="md-nav__link">
+      27.Cookie 与 Session 选择
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.28tftpandftp/" title="28.简单文件传送协议TFTP与文件传送协议FTP有什么区别，各用在什么场合？" class="md-nav__link">
+      28.简单文件传送协议TFTP与文件传送协议FTP有什么区别，各用在什么场合？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.29dhcp/" title="29.动态主机配置协议DHCP" class="md-nav__link">
+      29.动态主机配置协议DHCP
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.30howdhcp/" title="30.DHCP工作过程是怎样的？" class="md-nav__link">
+      30.DHCP工作过程是怎样的？
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.31socket/" title="31.Soket——应用进程跨越网络的通信" class="md-nav__link">
+      31.Soket——应用进程跨越网络的通信
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      网络安全
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        网络安全
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter6/6.1safeprotocol/" title="1.各种安全协议" class="md-nav__link">
+      1.各种安全协议
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-8" type="checkbox" id="nav-8">
+    
+    <label class="md-nav__link" for="nav-8">
+      其他
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-8">
+        其他
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter7/7.1iomodel/" title="1.I/O模型" class="md-nav__link">
+      1.I/O模型
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter7/7.2fiveiomodel/" title="2.五种I/O模型" class="md-nav__link">
+      2.五种I/O模型
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter7/7.3diff/" title="3.同步I/O和异步I/O" class="md-nav__link">
+      3.同步I/O和异步I/O
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter7/7.4diff/" title="4.阻塞I/O和非阻塞I/O" class="md-nav__link">
+      4.阻塞I/O和非阻塞I/O
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter7/7.5multiplexing/" title="5.I/O多路复用" class="md-nav__link">
+      5.I/O多路复用
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter7/7.6select/" title="6.select函数" class="md-nav__link">
+      6.select函数
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter7/7.7selectvspoll/" title="7.select vs poll" class="md-nav__link">
+      7.select vs poll
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter7/7.8epoll/" title="8.epoll" class="md-nav__link">
+      8.epoll
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../Chapter7/7.9scense/" title="9.select、poll、epoll的应用场景" class="md-nav__link">
+      9.select、poll、epoll的应用场景
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  <h1>11.一个 TCP 连接可以对应几个 HTTP 请求？</h1>
+                
+                
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../5.10browse/" title="10.现代浏览器在与服务器建立了一个 TCP 连接后是否会在一个 HTTP 请求完成后断开？什么情况下会断开？" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                10.现代浏览器在与服务器建立了一个 TCP 连接后是否会在一个 HTTP 请求完成后断开？什么情况下会断开？
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../5.12how/" title="12.一个 TCP 连接中 HTTP 请求发送可以一起发送么（比如一起发三个请求，再三个响应一起接收）？" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                12.一个 TCP 连接中 HTTP 请求发送可以一起发送么（比如一起发三个请求，再三个响应一起接收）？
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.ac79c3b0.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      
+    
+  </body>
 </html>
