@@ -1,4 +1,6 @@
-# 搞定技术面试：计算机网络基础知识
+# 搞定技术面试：计算机网络基础知识全面整理
+[https://code-freedom.github.io/NetWorkNotes/](https://code-freedom.github.io/NetWorkNotes/)
+
 计算机网络基础是技术面试中必问知识点之一，我刚开始准备面试的时候，花费了很大功夫。总体来说，计算机网路知识比较基础、能够形成很好的框架。
 
 这本笔记是我在准备的过程中参考书籍、面经、笔记做的笔记。里面既有知识框架、基础知识、也有面试题目。针对面试题目，我也给出了相关的基础知识，正所谓知其所以然。
@@ -11,7 +13,7 @@
 
 >这是笔记的1.0版本，由于时间紧凑，错误之处在所难免。我开了一个issue链接[issue](https://github.com/Code-Freedom/NetWorkNotes/issues)，还请在这里提出issue。
 
-### Contents
+## Contents
 
 - **计算机网络体系结构**
     - 1.体系结构

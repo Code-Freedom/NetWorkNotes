@@ -89,10 +89,35 @@ nav:
         - 8.epoll: Chapter7/7.8epoll.md
         - 9.select、poll、epoll的应用场景: Chapter7/7.9scense.md
 theme: 
-    name: readthedocs
+    name: material
     feature:
         tabs: true
 markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+      linenums: false
   - toc:
-      permalink: link
+      permalink: true
+  - footnotes
+  - meta
+  - def_list
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_png
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist
+  - pymdownx.tilde
+google_analytics:
+  - UA-152594401-1
+  - auto
 site_author: 进击的小喽啰
